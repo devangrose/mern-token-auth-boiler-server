@@ -18,17 +18,25 @@ app.use(cors());
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: false}));
 
-// Controllers
-app.use('/auth', expressJWT({
-  secret: process.env.JWT_SECRET,
-  getToken: function fromRequest(req){
+// Helper function for auth: This allows our server to parse the incoming token from client
+// This is being run as middleware, so it has access to the incoming request
+function fromRequest(req){
     if(req.body.headers.Authorization &&
       req.body.headers.Authorization.split(' ')[0] === 'Bearer'){
       return req.body.headers.Authorization.split(' ')[1];
     }
     return null;
-  }
-}).unless({
+}
+
+
+// Controllers
+// All auth routes are protected except for POST to /auth/login and /auth/signup
+// Remember to pass the JWT_SECRET
+// NOTE: the 'unless' portion is only needed if you need exceptions
+app.use('/auth', expressJWT({
+  secret: process.env.JWT_SECRET,
+  getToken: fromRequest
+  }).unless({
   path: [
     { url: '/auth/login', methods: ['POST'] },
     { url: '/auth/signup', methods: ['POST'] }

@@ -1,10 +1,9 @@
 require('dotenv').config();
-var express = require('express');
-var jwt = require('jsonwebtoken');
-var mongoose = require('mongoose');
+const express = require('express');
+const jwt = require('jsonwebtoken');
 
-var db = require('../models');
-var router = express.Router();
+const db = require('../models');
+const router = express.Router();
 
 // POST /auth/login route - returns a JWT
 router.post('/login', (req, res) => {
